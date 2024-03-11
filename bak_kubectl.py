@@ -10,7 +10,7 @@ def get_api_resources():
         print("getting verbs")
         print(f"  =====================================================================================".ljust(lwidth), end='')
         print("=========")
-        api_resources_output = subprocess.check_output(["kubectl", "api-resources", "--verbs=list", "-o", "wide", "--namespaced=true", "--no-headers=true"], text=True)
+        api_resources_output = subprocess.check_output(["/usr/bin/kubectl", "api-resources", "--verbs=list", "-o", "wide", "--namespaced=true", "--no-headers=true"], text=True)
         api_resources_lines = api_resources_output.strip().split("\n")
         return [line.split()[0] for line in api_resources_lines]
     except subprocess.CalledProcessError:
@@ -26,7 +26,7 @@ def process_api_resource(api_resource):
         print(f"getting {api_resource}")
         print("  =====================================================================================".ljust(lwidth), end='')
         print("=========")
-        resource_names_output = subprocess.check_output(["kubectl", "get", api_resource, "-o", "custom-columns=:.metadata.name"], text=True)
+        resource_names_output = subprocess.check_output(["/usr/bin/kubectl", "get", api_resource, "-o", "custom-columns=:.metadata.name"], text=True)
         resource_names = resource_names_output.strip().split("\n")
 
         # Generate YAML files for each resource
@@ -36,7 +36,7 @@ def process_api_resource(api_resource):
                 print("---N/A---")
             else:
                 print(f"  kubectl get {name} -o yaml > {api_resource}_{name}.yaml".ljust(lwidth), end='')
-                yaml_output = subprocess.check_output(["kubectl", "get", api_resource, name, "-o", "yaml"], text=True)
+                yaml_output = subprocess.check_output(["/usr/bin/kubectl", "get", api_resource, name, "-o", "yaml"], text=True)
                 with open(f"{api_resource}_{name}.yaml", "w") as yaml_file:
                     yaml_file.write(yaml_output)
                 print(f"Generated")
